@@ -1,10 +1,12 @@
 import json, random
 
 def load_questions():
+    """open file questions.json"""
     with open("questions.json", "r", encoding="utf-8") as f:
         return json.load(f)
 
 def get_question():
+    """question functions"""
     questions = load_questions()
     word, answer = random.choice(list(questions.items()))
 
