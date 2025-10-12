@@ -1,32 +1,32 @@
+# ques_choices/question_manager.py
+from pathlib import Path
 import json, random
+from typing import Tuple, List
 
-def load_questions():
-    """open file questions.json"""
-    with open("questions.json", "r", encoding="utf-8") as f:
-        return json.load(f)
+# รากโปรเจกต์
+ROOT = Path(__file__).resolve().parents[1]
+QUESTIONS_FILE = ROOT / "ques_choices" / "questions.json"
 
-def get_question():
-    """question functions"""
+def load_questions() -> dict:
+    """โหลดไฟล์ questions.json (รูปแบบคีย์=คำอังกฤษ, ค่า=คำแปลไทย)"""
+    return json.loads(QUESTIONS_FILE.read_text(encoding="utf-8"))
+
+def get_question() -> Tuple[str, str, List[str]]:
+    """
+    สุ่มคำถาม 1 ข้อ
+    return: (word, answer, choices[4])
+    """
     questions = load_questions()
     word, answer = random.choice(list(questions.items()))
 
-    # เอาตัวเลือกอื่นที่ไม่ใช่คำตอบ
+    # ตัวเลือกอื่น ๆ ที่ไม่ใช่คำตอบ
     other_choices = [val for val in questions.values() if val != answer]
+    # กรณีคลังคำไม่พอ 3 ตัวเลือก ให้สุ่มจากที่มี (กันพัง)
+    pick = min(3, len(other_choices))
+    choices = random.sample(other_choices, pick)
+    while len(choices) < 3:
+        choices.append(answer)  # ถ้าคำไม่พอ เติมด้วยคำตอบเพื่อกัน error (จะถูก shuffle)
 
-    # สุ่มตัวเลือก 3 ตัวจากตัวเลือกอื่น
-    choices = random.sample(other_choices, 3)
-
-    # ใส่คำตอบลงไป
     choices.append(answer)
-
-    # สุ่มตำแหน่งคำตอบ
     random.shuffle(choices)
-
     return word, answer, choices
-
-# ตัวอย่างใช้งาน
-if __name__ == "__main__":
-    word, answer, choices = get_question()
-    print("Question:", word)
-    print("Choices:", choices)
-    print("Answer:", answer)
