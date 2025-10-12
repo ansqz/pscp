@@ -1,119 +1,134 @@
-# dev_dryrun.py — Offline integration test (no real Discord connection)
-# ใช้ทดสอบร่วม: ques_choices.question_manager + score_manager + leaderboard
+# dev_dryrun_simple.py
+# ใช้ทดสอบเกมแบบออฟไลน์ (ไม่ต้องเชื่อม Discord จริง)
+# โปรแกรมนี้จำลองการเล่น 1 รอบ (5 คำ) พร้อมระบบให้คะแนนและแสดงอันดับ
 
 import asyncio
 import json
 import random
-from typing import List, Tuple
 
+# นำเข้าฟังก์ชันที่ใช้จากไฟล์อื่น
 from ques_choices.question_manager import get_question, load_questions
 from score_manager.score_manager import add_score, read_file, save
 from Leaderboard_system.leaderboard import show_leaderboard
 
 
-# ---------- Fake Discord TextChannel ----------
+# ------------------------------
+# สร้างช่องปลอมไว้ใช้ทดสอบแทน Discord
+# ------------------------------
 class FakeChannel:
     async def send(self, content=None, embed=None):
-        if embed:
-            print("\n[EMBED]")
-            print("title:", embed.title)
-            print("desc:\n", embed.description)
-        elif content is not None:
+        """จำลองการส่งข้อความ"""
+        if embed:  # ถ้าเป็น embed (ตารางคะแนน)
+            print("\n===== LEADERBOARD =====")
+            print(embed.description)
+        elif content:
             print("\n[MSG]", content)
 
 
-# ---------- Helpers ----------
-def validate_questions():
-    """ตรวจโครง questions.json แบบเบา ๆ"""
+# ------------------------------
+# ฟังก์ชันช่วยตรวจคำถาม
+# ------------------------------
+def check_questions():
+    """ตรวจว่ามีคำถามในไฟล์ questions.json หรือไม่"""
     data = load_questions()
-    if not isinstance(data, dict) or not data:
-        raise ValueError("questions.json ต้องเป็น dict และไม่ว่าง")
-    uniq = len(set(map(str.strip, data.values())))
-    if uniq < 4:
-        raise ValueError(
-            f"คำแปลไม่ซ้ำมี {uniq} รายการ (< 4) อาจสุ่มช้อยส์ 4 ตัวไม่ได้ทุกข้อ"
-        )
+    if not data or not isinstance(data, dict):
+        print("❌ ไม่มีข้อมูลคำถาม หรือรูปแบบไม่ถูกต้อง")
+        exit()
+    print(f"✅ Loaded {len(data)} questions.")
     return data
 
 
-def evaluate_and_award(correct_index: int, answers: List[Tuple[int, int]]):
-    """นับเฉพาะคำตอบแรกของแต่ละ user; ให้คะแนน 5,4,3 แล้วที่เหลือ 1"""
+# ------------------------------
+# ฟังก์ชันให้คะแนน
+# ------------------------------
+def give_points(correct_choice, answers):
+    """
+    ให้คะแนนกับคนที่ตอบถูก
+    - คนที่ตอบถูก 3 คนแรกได้ 5, 4, 3 คะแนน
+    - คนอื่นที่ตอบถูกได้ 1 คะแนน
+    - คนตอบซ้ำไม่นับ
+    """
     seen = set()
-    correct_order = []
+    correct_users = []
+
     for uid, choice in answers:
         if uid in seen:
             continue
         seen.add(uid)
-        if choice == correct_index:
-            correct_order.append(uid)
+        if choice == correct_choice:
+            correct_users.append(uid)
 
-    if not correct_order:
+    if not correct_users:
         return []
 
-    plan = [5, 4, 3] + [1] * max(0, len(correct_order) - 3)
-    awarded = list(zip(correct_order, plan))
-    for uid, pts in awarded:
-        add_score(uid, pts)
-    return awarded
+    scores = [5, 4, 3] + [1] * (len(correct_users) - 3)
+    result = list(zip(correct_users, scores))
+
+    for uid, s in result:
+        add_score(uid, s)
+
+    return result
 
 
-# ---------- One offline round (5 questions) ----------
-async def run_offline_round():
+# ------------------------------
+# ฟังก์ชันทดสอบเล่น 1 รอบ (5 คำ)
+# ------------------------------
+async def run_offline_test():
+    """จำลองการเล่น 1 รอบแบบออฟไลน์"""
     ch = FakeChannel()
+    save({})  # ล้างคะแนนเก่า
+    check_questions()  # ตรวจคำถาม
 
-    # เริ่มเทสต์: เคลียร์คะแนนให้สะอาดตา
-    save({})
-
-    # ตรวจโครงคำถาม
-    validate_questions()
-
-    print("=== OFFLINE ROUND START (5 คำ) ===")
-    # จำลอง user id 5 คน
+    print("=== เริ่มเกมรอบออฟไลน์ ===")
     users = [1111, 2222, 3333, 4444, 5555]
 
     for i in range(5):
         word, answer, choices = get_question()
+        print(f"\nคำที่ {i+1}: '{word}' แปลว่าอะไร?")
+        for n, c in enumerate(choices, start=1):
+            print(f"  {n}. {c}")
 
+        # คำตอบที่ถูกคือหมายเลขไหน
         try:
-            correct_index = choices.index(answer) + 1
+            correct = choices.index(answer) + 1
         except ValueError:
-            print(f"[WARN] ข้อ {i+1}: answer ไม่อยู่ใน choices — ข้าม")
+            print("⚠️ ข้อมูลผิดข้ามข้อนี้")
             continue
 
-        print(f"\nQ{i+1}: What is '{word}' in Thai?")
-        for n, c in enumerate(choices, 1):
-            print(f"  {n}. {c}")
-        print(f"(correct #{correct_index}: {answer})")
+        print(f"(เฉลยคือ {correct}: {answer})")
 
-        # จำลองลำดับการตอบ: สุ่มผู้ใช้/สุ่มตัวเลือก (แต่ให้บางคนตอบถูกแน่ ๆ)
+        # จำลองผู้เล่นตอบ
         random.shuffle(users)
-        script: List[Tuple[int, int]] = []
+        answers = []
 
-        # ให้ 3 คนแรกตอบถูกตามลำดับ (ทดสอบการให้ 5,4,3 คะแนน)
+        # 3 คนแรกตอบถูก
         for uid in users[:3]:
-            script.append((uid, correct_index))
-
-        # คนที่เหลือสุ่มตอบ อาจถูก/ผิดก็ได้
+            answers.append((uid, correct))
+        # 2 คนหลังสุ่มตอบ
         for uid in users[3:]:
-            choice = random.randint(1, 4)
-            script.append((uid, choice))
+            answers.append((uid, random.randint(1, 4)))
 
-        # ใส่คำตอบซ้ำของคนแรก (ต้องไม่นับ)
-        script.append((users[0], correct_index))
+        # ใส่คำตอบซ้ำของคนแรก (ไม่นับ)
+        answers.append((users[0], correct))
 
-        awarded = evaluate_and_award(correct_index, script)
-        if awarded:
-            print("Awarded:", ", ".join([f"{uid}+{pts}" for uid, pts in awarded]))
+        # ให้คะแนน
+        result = give_points(correct, answers)
+        if result:
+            print("ให้คะแนน:", ", ".join([f"{uid}+{pts}" for uid, pts in result]))
         else:
-            print("No one correct.")
+            print("ไม่มีใครตอบถูก")
 
-    print("\n=== SCORES AFTER ROUND ===")
+    # แสดงคะแนนทั้งหมด
+    print("\n=== คะแนนทั้งหมด ===")
     print(json.dumps(read_file(), ensure_ascii=False, indent=2))
 
-    # แสดง Leaderboard ผ่าน FakeChannel (ใช้โค้ดจริง)
+    # แสดง leaderboard จำลอง
     await show_leaderboard(ch, top_n=10)
-    print("\n=== OFFLINE ROUND END ===")
+    print("\n=== จบรอบออฟไลน์ ===")
 
 
+# ------------------------------
+# เริ่มโปรแกรม
+# ------------------------------
 if __name__ == "__main__":
-    asyncio.run(run_offline_round())
+    asyncio.run(run_offline_test())
