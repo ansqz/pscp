@@ -1,0 +1,33 @@
+# --- Python caches / build ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.mypy_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+dist/
+build/
+
+# --- Environments ---
+venv/
+.venv/
+
+# --- Editors / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Logs / temp ---
+*.log
+
+# --- Secrets / local config ---
+.env
+.env.*
+
+# --- Project data (ตัวเลือก) ---
+# ถ้าไม่อยาก push คะแนนจริง/คลังคำถามจริง ให้ ignore ไฟล์ข้อมูล
+score_manager/scores.json
+# ques_choices/questions.json   # ถ้าอยากเก็บใน repo ก็ "ไม่" ต้อง ignore บรรทัดนี้
