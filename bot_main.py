@@ -5,6 +5,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
+# our function
 from ques_choices.question_manager import get_question
 from score_manager.score_manager import add_score
 from Leaderboard_system.leaderboard import show_leaderboard, reset_scores
@@ -15,7 +16,7 @@ token = os.getenv('DISCORD_TOKEN')
 intents = discord.Intents.default()
 intents.members = True          # Required to see members in a server
 intents.message_content = True  # Required to read message content
-bot = commands.Bot(command_prefix='!', intents=intents) # Set prefix to '!'
+bot = commands.Bot(command_prefix='!', intents=intents) # Set prefix to '!' to run commands
 
 @bot.event
 async def on_ready():
