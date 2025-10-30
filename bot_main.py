@@ -42,7 +42,14 @@ async def hello(ctx):
 
 @bot.command()
 async def quiz(ctx):
-    '''start the game'''
+    """
+    เล่น 1 รอบ (5 คำ)
+    - โพสต์คำถามละ 1 ข้อ: คำอังกฤษ + ตัวเลือก 4 ตัว
+    - เก็บคำตอบภายใน 5 วินาที (ผู้ใช้พิมพ์เลข 1-4)
+    - ให้คะแนนตามลำดับผู้ตอบถูก: 5,4,3 และคนถัดไปได้ 1
+    - คูลดาวน์ 2 วินาที ระหว่างข้อ
+    - จบครบ 5 ข้อ โพสต์ Leaderboard รอบนี้
+    """
     ch = ctx.channel
     for i in range(5):  # รอบละ 5 ข้อ
         word, answer, choices = get_question()
@@ -87,13 +94,13 @@ async def quiz(ctx):
 
         # ให้คะแนน: 5,4,3, แล้วที่เหลือได้ 1
         if not correct_user:
-            await ch.send(f"❎ หมดเวลา! คำตอบคือ **{answer}**. ไม่มีใครตอบถูก.")
+            await ch.send(f"❎ หมดเวลา! คำตอบคือ **{answer}** ไม่มีใครตอบถูก")
             await asyncio.sleep(2)
             continue
-        plan = [5, 4, 3]
+        points = [5, 4, 3]
         if len(correct_user) > 3:
-            plan += [1] * (len(correct_user) - 3)
-        for uid, pts in zip(correct_user, plan):
+            points += [1] * (len(correct_user) - 3)
+        for uid, pts in zip(correct_user, points):
             add_score(uid, pts)
 
         await ch.send(f"✅ เฉลย: **{answer}**")
