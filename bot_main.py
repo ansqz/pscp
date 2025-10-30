@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 from ques_choices.question_manager import get_question
 from score_manager.score_manager import add_score
-from Leaderboard_system.leaderboard import show_leaderboard
+from Leaderboard_system.leaderboard import show_leaderboard, reset_scores
 
 load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
@@ -108,5 +108,15 @@ async def quiz(ctx):
 
     # จบรอบ → โชว์ Leaderboard รอบนี้ (Top 10)
     await show_leaderboard(ch, top_n=10)
+
+@bot.command()
+async def reset(ctx):
+    '''รีเซ็ตคะแนน'''
+    await reset_scores(ctx.channel)
+@bot.command()
+async def leaderboard(ctx):
+    '''ดู leader board'''
+    await show_leaderboard(ctx.channel, top_n=10)
+
 
 bot.run(token)
