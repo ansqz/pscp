@@ -16,8 +16,8 @@ from Leaderboard_system.leaderboard import show_leaderboard
 # สร้างช่องปลอมไว้ใช้ทดสอบแทน Discord
 # ------------------------------
 class FakeChannel:
+    """จำลองการส่งข้อความ"""
     async def send(self, content=None, embed=None):
-        """จำลองการส่งข้อความ"""
         if embed:  # ถ้าเป็น embed (ตารางคะแนน)
             print("\n===== LEADERBOARD =====")
             print(embed.description)

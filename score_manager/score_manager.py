@@ -11,7 +11,7 @@ def read_file() -> Dict[str, int]:
         return {}
     try:
         return json.loads(SCORES_FILE.read_text(encoding="utf-8"))
-    except Exception:
+    except FileNotFoundError:
         return {}
 
 def save(scores: Dict[str, int]) -> None:

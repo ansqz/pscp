@@ -1,18 +1,21 @@
+'''ระบบ Leader board'''
 import json
-import discord
 from datetime import datetime
+from pathlib import Path
+import discord
 
 # ไฟล์เก็บคะแนน
-SCORES_FILE = "score_manager/scores.json"
+CURRENT_FILE_PATH = Path(__file__).resolve().parent
+ROOT_PATH = CURRENT_FILE_PATH.parent
+SCORES_FILE = ROOT_PATH / "score_manager" / "scores.json"
 
 async def show_leaderboard(channel, top_n=10):
     """แสดงตารางคะแนน Top 10"""
-
     # โหลดไฟล์คะแนน
     try:
-        with open(SCORES_FILE, "r", encoding="utf-8") as f:
+        with open(SCORES_FILE, "r", encoding="UTF-8") as f:
             scores = json.load(f)
-    except:
+    except FileNotFoundError:
         await channel.send("❌ ไม่มีข้อมูลคะแนน")
         return
 
