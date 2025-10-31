@@ -16,12 +16,21 @@ token = os.getenv('DISCORD_TOKEN')
 intents = discord.Intents.default()
 intents.members = True          # Required to see members in a server
 intents.message_content = True  # Required to read message content
-bot = commands.Bot(command_prefix='!', intents=intents) # Set prefix to '!' to run commands
+bot = commands.Bot(command_prefix='!', intents=intents) # Set prefix to '!' not used anymore
+
+# can only use slash command on this server
+server_id = discord.Object(id=1426404075687116820)
 
 @bot.event
 async def on_ready():
     '''check if bot online'''
     print('Bot Online!')
+    try:
+        synced = await bot.tree.sync(guild=server_id)
+        print(f'Synced {len(synced)} command(s) to guild {server_id.id}')
+    except Exception as error:
+        print(f'Error syncing commands: {error}')
+
 
 @bot.event
 async def on_message(message):
@@ -41,8 +50,8 @@ async def hello(ctx):
     '''test discord command'''
     await ctx.send(f"hello {ctx.author.name}!")
 
-@bot.command()
-async def quiz(ctx):
+@bot.tree.command(name='quiz', description='start round with 5 words', guild=server_id)
+async def quiz(interaction: discord.Interaction):
     """
     เล่น 1 รอบ (5 คำ)
     - โพสต์คำถามละ 1 ข้อ: คำอังกฤษ + ตัวเลือก 4 ตัว
@@ -51,7 +60,8 @@ async def quiz(ctx):
     - คูลดาวน์ 2 วินาที ระหว่างข้อ
     - จบครบ 5 ข้อ โพสต์ Leaderboard รอบนี้
     """
-    ch = ctx.channel
+    await interaction.response.send_message('Starting the Round!')
+    ch = interaction.channel
     for i in range(5):  # รอบละ 5 ข้อ
         word, answer, choices = get_question()
         # หา index คำตอบที่ถูก (1-4)
@@ -59,11 +69,11 @@ async def quiz(ctx):
             correct_index = choices.index(answer) + 1
         except ValueError:
             # ถ้าข้อมูลผิดรูป (answer ไม่อยู่ใน choices) ให้ข้ามข้อ
-            await ctx.send("⚠️ ข้อมูลผิด! ข้ามข้อนี้")
+            await ch.send("⚠️ ข้อมูลผิด! ข้ามข้อนี้")
             await asyncio.sleep(1)
             continue
 
-        question = f'What is {word} in Thai?'
+        question = f'What is "{word}" in Thai?'
         str_choices = '\n'.join([f'{i+1}. {choices[i]}' for i in range(4)])
         await ch.send(f'**{question}**\n{str_choices}')
 
@@ -110,14 +120,26 @@ async def quiz(ctx):
     # จบรอบ → โชว์ Leaderboard รอบนี้ (Top 10)
     await show_leaderboard(ch, top_n=10)
 
-@bot.command()
-async def reset(ctx):
+@bot.tree.command(name='reset', description='Reset all the score', guild=server_id)
+async def reset(interaction: discord.Interaction):
     '''รีเซ็ตคะแนน'''
-    await reset_scores(ctx.channel)
-@bot.command()
-async def leaderboard(ctx):
+    await interaction.response.send_message('Resetting score...')
+    await reset_scores(interaction.channel)
+    try:
+        await interaction.delete_original_response()
+    except discord.errors.NotFound:
+        print('Message was already deleted')
+
+@bot.tree.command(name='leaderboard', description='Show the TOP 10 leader board', guild=server_id)
+async def leaderboard(interaction: discord.Interaction):
     '''ดู leader board'''
-    await show_leaderboard(ctx.channel, top_n=10)
+    await interaction.response.send_message('Showing Leader Board...')
+    await show_leaderboard(interaction.channel, top_n=10)
+    try:
+        await interaction.delete_original_response()
+    except discord.errors.NotFound:
+        print('Message was already deleted')
+
 
 
 bot.run(token)
