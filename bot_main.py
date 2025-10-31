@@ -121,7 +121,7 @@ async def reset(interaction: discord.Interaction):
     try:
         await interaction.delete_original_response()
     except discord.errors.NotFound:
-        print('Message was already deleted')
+        pass
 
 @bot.tree.command(name='leaderboard', description='Show the TOP 10 leader board', guild=server_id)
 async def leaderboard(interaction: discord.Interaction):
@@ -131,6 +131,6 @@ async def leaderboard(interaction: discord.Interaction):
     try:
         await interaction.delete_original_response()
     except discord.errors.NotFound:
-        print('Message was already deleted')
+        pass
 
 bot.run(token)
