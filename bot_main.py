@@ -18,7 +18,7 @@ intents.members = True          # Required to see members in a server
 intents.message_content = True  # Required to read message content
 bot = commands.Bot(command_prefix='!', intents=intents) # Set prefix to '!' not used anymore
 
-# can only use slash command on this server
+# can use slash command on this server only
 server_id = discord.Object(id=1426404075687116820)
 
 @bot.event
@@ -31,24 +31,17 @@ async def on_ready():
     except Exception as error:
         print(f'Error syncing commands: {error}')
 
-
 @bot.event
 async def on_message(message):
     '''This function runs every time a message is sent'''
     # don't answer itself
     if message.author == bot.user:
         return
-
     mes = message.content
     if mes == 'ping':
         await message.channel.send('Pong!')
 
     await bot.process_commands(message) # check if all condition is not met
-
-@bot.command()
-async def hello(ctx):
-    '''test discord command'''
-    await ctx.send(f"hello {ctx.author.name}!")
 
 @bot.tree.command(name='quiz', description='start round with 5 words', guild=server_id)
 async def quiz(interaction: discord.Interaction):
