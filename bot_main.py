@@ -41,8 +41,8 @@ async def on_message(message):
     await bot.process_commands(message) # check if all condition is not met
 
 @bot.tree.command(name='quiz',
-                  description='Starts round with 5 Words. Each round has only 5 Seconds! be Quick!',
-                  guild=server_id)
+                description='Starts round with 5 Words. Each round has only 5 Seconds! be Quick!',
+                guild=server_id)
 async def quiz(interaction: discord.Interaction):
     """
     เล่น 1 รอบ (5 คำ)

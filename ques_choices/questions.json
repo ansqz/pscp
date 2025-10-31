@@ -22,40 +22,160 @@
   "Journalist": "นักข่าว",
   "Inform": "แจ้งให้ทราบ",
   "Audience": "ผู้ชม",
-
+  
   "Analyze": "วิเคราะห์",
   "Exhibition": "นิทรรศการ",
   "Environment": "สิ่งแวดล้อม",
   "Ingredients": "วัตถุดิบ",
   "Sausage": "ไส้กรอก",
-
+  
   "Avoid": "หลีกเลี่ยง",
   "Medicine": "ยา",
   "Injure": "บาดเจ็บ",
   "Fiction": "นิยาย",
   "Sculpture": "ประติมากรรม",
-
+  
   "Hire": "จ้าง",
   "Collection": "ของสะสม",
   "Culture": "วัฒนธรรม",
   "Repair": "ซ่อม",
   "Vase": "แจกัน",
-
+  
   "Neighbour": "เพื่อนบ้าน",
   "Cozy": "อบอุ่น",
   "Balcony": "ระเบียง",
   "Blind": "บอด",
   "Charming": "น่าดึงดูด",
-
+  
   "Annoyed": "รำคาญ",
   "Confident": "มั่นใจ",
   "Confused": "สับสน",
   "Satisfied": "ยินดี",
   "Cruel": "โหดร้าย",
-
+  
   "Delighted": "ดีใจ",
   "Border": "เขตแดน",
   "Cabin": "ห้องโดยสาร",
   "Vehicle": "ยานพาหนะ",
-  "Destination": "ปลายทาง"
+  "Destination": "ปลายทาง",
+  
+  "Furniture": "เฟอร์นิเจอร์",
+  "Receipt": "ใบเสร็จ",
+  "Luggage": "สัมภาระ",
+  "Wallet": "กระเป๋าสตางค์",
+  "Umbrella": "ร่ม",
+  
+  "Basement": "ห้องใต้ดิน",
+  "Attic": "ห้องใต้หลังคา",
+  "Ceiling": "เพดาน",
+  "Appliance": "เครื่องใช้ไฟฟ้า",
+  "Bicycle": "จักรยาน",
+  
+  "Opportunity": "โอกาส",
+  "Knowledge": "ความรู้",
+  "Attitude": "ทัศนคติ",
+  "Behavior": "พฤติกรรม",
+  "Permission": "การอนุญาต",
+  
+  "Responsibility": "ความรับผิดชอบ",
+  "Government": "รัฐบาล",
+  "Advantage": "ข้อได้เปรียบ",
+  "Disadvantage": "ข้อเสียเปรียบ",
+  "Opinion": "ความคิดเห็น",
+  
+  "Purchase": "ซื้อ",
+  "Measure": "วัด",
+  "Complain": "บ่น",
+  "Persuade": "โน้มน้าว",
+  "Apologize": "ขอโทษ",
+  
+  "Arrive": "มาถึง",
+  "Depart": "ออกจาก",
+  "Whisper": "กระซิบ",
+  "Shout": "ตะโกน",
+  "Hesitate": "ลังเล",
+  
+  "Realize": "ตระหนัก",
+  "Recognize": "จำได้",
+  "Assume": "สันนิษฐาน",
+  "Achieve": "บรรลุ",
+  "Compare": "เปรียบเทียบ",
+  
+  "Anxious": "วิตกกังวล",
+  "Exhausted": "เหนื่อยล้า",
+  "Generous": "ใจกว้าง",
+  "Stubborn": "ดื้อรั้น",
+  "Curious": "อยากรู้อยากเห็น",
+  
+  "Humble": "ถ่อมตัว",
+  "Convenient": "สะดวก",
+  "Spacious": "กว้างขวาง",
+  "Ancient": "โบราณ",
+  "Delicious": "อร่อย",
+  
+  "Meanwhile": "ในขณะที่",
+  "Therefore": "ดังนั้น",
+  "Although": "แม้ว่า",
+  "Frequently": "บ่อยครั้ง",
+  "Perhaps": "บางที",
+  
+  "Breakfast": "อาหารเช้า",
+  "Lunch": "อาหารกลางวัน",
+  "Dinner": "อาหารเย็น",
+  "Vegetable": "ผัก",
+  "Fruit": "ผลไม้",
+  
+  "Airport": "สนามบิน",
+  "Station": "สถานี",
+  "Hotel": "โรงแรม",
+  "Museum": "พิพิธภัณฑ์",
+  "Pharmacy": "ร้านขายยา",
+  
+  "Wake up": "ตื่นนอน",
+  "Sleep": "นอน",
+  "Wait": "รอ",
+  "Decide": "ตัดสินใจ",
+  "Explain": "อธิบาย",
+  
+  "Forget": "ลืม",
+  "Remember": "จำได้",
+  "Invite": "เชิญ",
+  "Choose": "เลือก",
+  "Believe": "เชื่อ",
+  
+  "Happen": "เกิดขึ้น",
+  "Need": "ต้องการ",
+  "Want": "อยากได้",
+  "Try": "พยายาม / ลอง",
+  "Help": "ช่วยเหลือ",
+  
+  "Easy": "ง่าย",
+  "Difficult": "ยาก",
+  "Important": "สำคัญ",
+  "Cheap": "ราคาถูก",
+  "Expensive": "ราคาแพง",
+  
+  "Tired": "เหนื่อย",
+  "Hungry": "หิว",
+  "Thirsty": "กระหายน้ำ",
+  "Friendly": "เป็นมิตร",
+  "Busy": "ยุ่ง",
+  
+  "Beautiful": "สวยงาม",
+  "Ugly": "น่าเกลียด",
+  "Healthy": "สุขภาพดี",
+  "Sick": "ป่วย",
+  "Single": "โสด / เดียว",
+  
+  "Education": "การศึกษา",
+  "Experience": "ประสบการณ์",
+  "Health": "สุขภาพ",
+  "Advice": "คำแนะนำ",
+  "Future": "อนาคต",
+  
+  "Because": "เพราะว่า",
+  "Sometimes": "บางครั้ง",
+  "Usually": "โดยปกติ",
+  "Always": "เสมอ",
+  "Never": "ไม่เคย"
 }
