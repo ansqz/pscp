@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 # our function
 from ques_choices.question_manager import get_question
 from score_manager.score_manager import add_score
-from Leaderboard_system.leaderboard import show_leaderboard, reset_scores
+from Leaderboard_system.leaderboard import show_leaderboard, admin_reset_scores
 
 load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
@@ -43,7 +43,7 @@ async def on_message(message):
 
     await bot.process_commands(message) # check if all condition is not met
 
-@bot.tree.command(name='quiz', description='start round with 5 words', guild=server_id)
+@bot.tree.command(name='quiz', description='Starts round with 5 words', guild=server_id)
 async def quiz(interaction: discord.Interaction):
     """
     เล่น 1 รอบ (5 คำ)
@@ -117,7 +117,7 @@ async def quiz(interaction: discord.Interaction):
 async def reset(interaction: discord.Interaction):
     '''รีเซ็ตคะแนน'''
     await interaction.response.send_message('Resetting score...')
-    await reset_scores(interaction.channel)
+    await admin_reset_scores(interaction.channel, interaction.user)
     try:
         await interaction.delete_original_response()
     except discord.errors.NotFound:
@@ -132,7 +132,5 @@ async def leaderboard(interaction: discord.Interaction):
         await interaction.delete_original_response()
     except discord.errors.NotFound:
         print('Message was already deleted')
-
-
 
 bot.run(token)

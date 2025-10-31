@@ -45,3 +45,9 @@ async def reset_scores(channel):
     with open(SCORES_FILE, "w", encoding="utf-8") as f:
         json.dump({}, f, ensure_ascii=False, indent=2)
     await channel.send("🔄 คะแนนทั้งหมดถูกรีเซ็ตแล้ว (ทุกวันที่ 1 ของเดือน)")
+
+async def admin_reset_scores(channel, name):
+    """รีเซ็ตคะแนนทั้งหมด"""
+    with open(SCORES_FILE, "w", encoding="utf-8") as f:
+        json.dump({}, f, ensure_ascii=False, indent=2)
+    await channel.send(f"⟳ รีเซ็ตคะแนนทั้งหมดโดย {name}")
