@@ -1,7 +1,6 @@
 # Leaderboard_system/scheduler.py
 import os
 import asyncio
-from typing import List, Tuple
 
 import discord
 from dotenv import load_dotenv
@@ -31,27 +30,24 @@ async def _play_round(bot: discord.Client) -> None:
     """
     ch = bot.get_channel(CHANNEL_ID)
     if ch is None or not isinstance(ch, discord.TextChannel):
-        return  # ช่องไม่พร้อมก็จบเงียบ ๆ
-
+        return # no channel
     for i in range(5):  # รอบละ 5 ข้อ
-        # ใช้ฟังก์ชันของคุณ: ได้ (word, answer, choices[4])
         word, answer, choices = get_question()
         # หา index คำตอบที่ถูก (1-4)
         try:
             correct_index = choices.index(answer) + 1
         except ValueError:
             # ถ้าข้อมูลผิดรูป (answer ไม่อยู่ใน choices) ให้ข้ามข้อ
-            await ch.send("⚠️ ข้อมูลคำถามผิดรูปแบบ ข้ามข้อนี้")
+            await ch.send("⚠️ ข้อมูลผิด! ข้ามข้อนี้")
             await asyncio.sleep(1)
             continue
 
-        header = f"**คำที่ {i+1}/5**  What is '{word}' in Thai?"
-        body = "\n".join(f"{n}. {txt}" for n, txt in enumerate(choices, start=1))
-        await ch.send(f"{header}\n{body}\nพิมพ์เลขคำตอบ (1-4) ภายใน **5 วินาที** !")
+        question = f'What is "{word}" in Thai?'
+        str_choices = '\n'.join([f'{i+1}. {choices[i]}' for i in range(4)])
+        await ch.send(f'**{question}**\n{str_choices}')
 
-        # เก็บคำตอบ (user_id, ตัวเลือก)
-        answers: List[Tuple[int, int]] = []
-
+        # เก็บข้อมูลคำตอบของผู้เล่น
+        answers = []
         def check(msg: discord.Message) -> bool:
             return (
                 msg.channel.id == ch.id
@@ -61,28 +57,31 @@ async def _play_round(bot: discord.Client) -> None:
 
         try:
             while True:
-                msg = await bot.wait_for("message", check=check, timeout=5)
+                msg = await bot.wait_for("message", check=check, timeout=5.0)
                 answers.append((msg.author.id, int(msg.content)))
         except asyncio.TimeoutError:
             pass  # หมดเวลา
 
         # นับเฉพาะคำตอบแรกของแต่ละคน แล้วคัดเฉพาะที่ตอบถูก
         seen = set()
-        correct_order: List[int] = []
+        correct_user = []
         for uid, choice in answers:
             if uid in seen:
                 continue
             seen.add(uid)
             if choice == correct_index:
-                correct_order.append(uid)
+                correct_user.append(uid)
 
         # ให้คะแนน: 5,4,3, แล้วที่เหลือได้ 1
-        if correct_order:
-            plan = [5, 4, 3]
-            if len(correct_order) > 3:
-                plan += [1] * (len(correct_order) - 3)
-            for uid, pts in zip(correct_order, plan):
-                add_score(uid, pts)
+        if not correct_user:
+            await ch.send(f"❎ หมดเวลา! คำตอบคือ **{answer}** ไม่มีใครตอบถูก")
+            await asyncio.sleep(2)
+            continue
+        points = [5, 4, 3]
+        if len(correct_user) > 3:
+            points += [1] * (len(correct_user) - 3)
+        for uid, pts in zip(correct_user, points):
+            add_score(uid, pts)
 
         await ch.send(f"✅ เฉลย: **{answer}**")
         await asyncio.sleep(2)  # คูลดาวน์ก่อนข้อถัดไป

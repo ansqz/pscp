@@ -25,11 +25,8 @@ server_id = discord.Object(id=1426404075687116820)
 async def on_ready():
     '''check if bot online'''
     print('Bot Online!')
-    try:
-        synced = await bot.tree.sync(guild=server_id)
-        print(f'Synced {len(synced)} command(s) to guild {server_id.id}')
-    except Exception as error:
-        print(f'Error syncing commands: {error}')
+    synced = await bot.tree.sync(guild=server_id)
+    print(f'Synced {len(synced)} command(s) to guild {server_id.id}')
 
 @bot.event
 async def on_message(message):
@@ -43,7 +40,9 @@ async def on_message(message):
 
     await bot.process_commands(message) # check if all condition is not met
 
-@bot.tree.command(name='quiz', description='Starts round with 5 words', guild=server_id)
+@bot.tree.command(name='quiz',
+                  description='Starts round with 5 Words. Each round has only 5 Seconds! be Quick!',
+                  guild=server_id)
 async def quiz(interaction: discord.Interaction):
     """
     เล่น 1 รอบ (5 คำ)
@@ -113,7 +112,7 @@ async def quiz(interaction: discord.Interaction):
     # จบรอบ → โชว์ Leaderboard รอบนี้ (Top 10)
     await show_leaderboard(ch, top_n=10)
 
-@bot.tree.command(name='reset', description='Reset all the score', guild=server_id)
+@bot.tree.command(name='reset', description='Reset all the user scores', guild=server_id)
 async def reset(interaction: discord.Interaction):
     '''รีเซ็ตคะแนน'''
     await interaction.response.send_message('Resetting score...')
