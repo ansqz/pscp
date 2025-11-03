@@ -67,7 +67,13 @@ async def quiz(interaction: discord.Interaction):
 
         question = f'What is "{word}" in Thai?'
         str_choices = '\n'.join([f'{i+1}. {choices[i]}' for i in range(4)])
-        await ch.send(f'**{question}**\n{str_choices}')
+        embed_question = discord.Embed(
+            colour = discord.Colour.dark_blue(),
+            title = f"**{question}**",
+            description = '\n'.join([f':number_{i+1}: {choices[i]}' for i in range(4)])
+        )
+        await ch.send(embed=embed_question)
+        # await ch.send(f'**{question}**\n{str_choices}')
 
         # เก็บข้อมูลคำตอบของผู้เล่น
         answers = []
@@ -131,5 +137,17 @@ async def leaderboard(interaction: discord.Interaction):
         await interaction.delete_original_response()
     except discord.errors.NotFound:
         pass
+
+@bot.tree.command(name="myscore", description="Show your score", guild=server_id)
+async def myscore(interaction: discord.Interaction):
+    """ดูคะแนนตัวเอง"""
+    score = add_score(interaction.user.id, 0)
+    embed_score = discord.Embed(
+        colour=discord.Colour.gold(),
+        title=f"Your score is: {score}",
+    )
+    embed_score.set_author(name = interaction.user.display_name, icon_url = interaction.user.display_avatar.url)
+    await interaction.response.send_message(embed=embed_score)
+
 
 bot.run(token)
